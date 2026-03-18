@@ -9,7 +9,7 @@ on:
       zip_name:
         description: "Name of the ZIP file (without .zip extension)"
         required: false
-        default: "CollapsibleTrelloLists"
+        default: "better-collapsible-trello-lists-chrome-extension"
 
 jobs:
   release:
@@ -105,9 +105,9 @@ jobs:
           base="${{ github.event.inputs.zip_name }}"
           tag="${{ steps.bump.outputs.new_tag }}"
           if [ -z "$base" ]; then
-            base="CollapsibleTrelloLists"
+            base="${ default }"
           fi
-          zipname="${base}.zip"
+          zipname="${ base }-${ steps.bump.outputs.new_tag }.zip"
           echo "zipname=$zipname" >> $GITHUB_OUTPUT
 
       - name: Create ZIP excluding .github
