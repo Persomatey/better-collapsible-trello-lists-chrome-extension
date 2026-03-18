@@ -107,7 +107,7 @@ jobs:
           if [ -z "$base" ]; then
             base="${ zip_name.default }"
           fi
-          zipname="${ base }-${ steps.bump.outputs.new_tag }.zip"
+          zipname="${base}-${{ steps.bump.outputs.new_tag }}.zip"
           echo "zipname=$zipname" >> $GITHUB_OUTPUT
 
       - name: Create ZIP excluding .github
