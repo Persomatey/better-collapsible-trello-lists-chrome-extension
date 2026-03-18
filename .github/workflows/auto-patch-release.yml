@@ -1,6 +1,9 @@
 name: Auto Patch Release
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       zip_name:
@@ -40,12 +43,26 @@ jobs:
           IFS='.' read -r major minor patch <<< "$version"
           patch=$((patch + 1))
           new_tag="v$major.$minor.$patch"
+          new_version="$major.$minor.$patch"
           echo "new_tag=$new_tag" >> $GITHUB_OUTPUT
+          echo "new_version=$new_version" >> $GITHUB_OUTPUT
 
-      - name: Create new tag and push it
+      - name: Update version in manifest.json
+        run: |
+          new_version="${{ steps.bump.outputs.new_version }}"
+          jq --arg v "$new_version" '.version = $v' manifest.json > manifest.tmp.json
+          mv manifest.tmp.json manifest.json
+
+      - name: Commit updated manifest.json
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
+          git add manifest.json
+          git diff --cached --quiet || git commit -m "chore: bump version to ${{ steps.bump.outputs.new_version }}"
+          git push origin HEAD
+
+      - name: Create new tag and push it
+        run: |
           git tag ${{ steps.bump.outputs.new_tag }}
           git push origin ${{ steps.bump.outputs.new_tag }}
 
@@ -55,7 +72,7 @@ jobs:
           base="${{ github.event.inputs.zip_name }}"
           tag="${{ steps.bump.outputs.new_tag }}"
           if [ -z "$base" ]; then
-            base="source"
+            base="CollapsibleTrelloLists"
           fi
           zipname="${base}.zip"
           echo "zipname=$zipname" >> $GITHUB_OUTPUT
