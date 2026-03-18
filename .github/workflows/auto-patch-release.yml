@@ -105,7 +105,7 @@ jobs:
           base="${{ github.event.inputs.zip_name }}"
           tag="${{ steps.bump.outputs.new_tag }}"
           if [ -z "$base" ]; then
-            base="${ default }"
+            base="${ zip_name.default }"
           fi
           zipname="${ base }-${ steps.bump.outputs.new_tag }.zip"
           echo "zipname=$zipname" >> $GITHUB_OUTPUT
