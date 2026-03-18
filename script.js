@@ -1,28 +1,36 @@
 if (!document.querySelector(".collapse-toggle")) {
-  // get boardid
   var boardid = window.location.href.substring(
     window.location.href.indexOf("/b/") + 3,
     window.location.href.indexOf("/b/") + 11
   );
-  // get all lists
+
   document.querySelectorAll("h2[data-testid='list-name']").forEach(e => {
-    // encoded list title for unique id
     var columnName = encodeURI(e.textContent);
-    // get isClosed value from chrome extension storage
+
+    // ✨ Count cards in this list
+    var cardCount = e.closest("[data-testid='list']")
+      .querySelectorAll("[data-testid='trello-card']").length;
+
     chrome.storage.local.get(boardid + ":" + columnName, isClosed => {
-      // if this list is closed, add the -closed class
       if (isClosed[boardid + ":" + columnName]) {
         e.parentNode.parentNode.parentNode.classList.add("-closed");
         e.parentNode.parentNode.parentNode.classList.add("-cl");
       }
-      // create toggle button
+
       var toggle = document.createElement("div");
       toggle.className = "collapse-toggle";
-      // toggle click handler
+
+      // ✨ Set card count as a data attribute for CSS to pick up
+      toggle.dataset.count = cardCount;
+
       toggle.addEventListener("click", evt => {
-        // get column name from event target
         var thisColumn = encodeURI(evt.target.nextSibling.textContent);
-        // set isClosed value in chrome storage to inverse value
+
+        // ✨ Refresh card count on toggle (list may have changed)
+        var freshCount = evt.target.closest("[data-testid='list']")
+          .querySelectorAll("[data-testid='trello-card']").length;
+        evt.target.dataset.count = freshCount;
+
         chrome.storage.local.set(
           {
             [boardid + ":" + thisColumn]: isClosed[boardid + ":" + columnName]
@@ -30,21 +38,16 @@ if (!document.querySelector(".collapse-toggle")) {
               : true
           },
           res => {
-            // toggle the -closed class on successful save
-            evt.target.parentNode.parentNode.parentNode.classList.toggle(
-              "-closed"
-            );
-            evt.target.parentNode.parentNode.parentNode.classList.toggle(
-              "-cl"
-            );
+            evt.target.parentNode.parentNode.parentNode.classList.toggle("-closed");
+            evt.target.parentNode.parentNode.parentNode.classList.toggle("-cl");
           }
         );
       });
-      // insert toggle button
+
       e.parentNode.insertBefore(toggle, e);
     });
   });
-  // we want to open lists after a short delay if a user is dragging a card on top of one
+
   var isClosed, openList;
   document.querySelectorAll("div[data-testid='list']").forEach(lc => {
     lc.addEventListener("dragenter", lce => {
@@ -57,8 +60,6 @@ if (!document.querySelector(".collapse-toggle")) {
           lce.pageY < c.bottom
         ) {
           if (!openList) {
-            // we use a timeout here so that users can drag cards across a closed list without
-            // opening it right away.
             openList = setTimeout(() => {
               l.classList.add("-open");
               l.classList.remove("-closed");
