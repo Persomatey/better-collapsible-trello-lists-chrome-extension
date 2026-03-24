@@ -1,17 +1,17 @@
-/* closed list */
+/* Closed list */
 body div[data-testid='list'].-closed {
-    transform: rotate(90deg);
-    transform-origin: top left;
-    position: relative;
-    height: 42px;
-    left: 42px;
-    width: 228px;
-    margin-right: -182px;
+	transform: rotate(90deg);
+	transform-origin: top left;
+	position: relative;
+	height: 42px;
+	left: 42px;
+	width: 228px;
+	margin-right: -182px;
 }
 
-/* hide everything in a closed list... */
+/* Hide everything in a closed list... */
 div[data-testid='list'].-closed * {
-    display: none !important;
+	display: none !important;
 }
 
 /* ...except for the title and the collapse toggle */
@@ -19,99 +19,99 @@ div[data-testid='list'].-closed div[data-testid='list-header'],
 div[data-testid='list'].-closed div[data-testid='list-header'] > div,
 div[data-testid='list'].-closed div[data-testid='list-header'] h2[data-testid='list-name'], 
 div[data-testid='list'].-closed div[data-testid='list-header'] .collapse-toggle {
-    display: block !important;
+	display: block !important;
 }
 
 div[data-testid='list'].-closed div[data-testid='list-header'] h2[data-testid='list-name'] {
-    top: -3px;
+	top: -3px;
 }
 
 div[data-testid='list'].-closed .collapse-toggle {
-    top: 2px;
+	top: 2px;
 }
 
-/* we need to reduce the width of the title to fit the collapse toggle in */
+/* We need to reduce the width of the title to fit the collapse toggle in */
 .js-list-container h2[data-testid='list-name'] {
-    left: 27px;
-    padding-left: 5px;
+	left: 27px;
+	padding-left: 5px;
 }
 
 .js-list-container h2[data-testid='list-name'] ~ textarea {
-    width: calc(100% - 22px);
+	width: calc(100% - 22px);
 }
 
-/* collapsed list header - rotated + some css hackery to make it look right */
+/* Collapsed list header - rotated + some css hackery to make it look right */
 .js-list-container.-closed h2[data-testid='list-name'] {
-    height: 40px !important;
-    width: auto;
-    line-height: 30px;
-    display: block !important;
-    position: absolute; 
-    background: transparent;
-    left: 36px;
-    top: 4px;
+	height: 40px !important;
+	width: auto;
+	line-height: 30px;
+	display: block !important;
+	position: absolute; 
+	background: transparent;
+	left: 36px;
+	top: 4px;
 }
 
 .ui-draggable-dragging {
-    display: none !important;
+	display: none !important;
 }
 
-/* collapse toggle button */
+/* Collapse toggle button */
 .collapse-toggle {
-    float: left;
-    cursor: pointer;
-    background: rgba(255,255,255,0.5);
-    border: 1px solid;
-    border-color: rgba(255,255,255,0.3);
-    border-radius: 50%;
-    height: 20px;
-    width: 20px;
-    text-align: center;
-    position: relative;
-    top: 5px;
-    left: 5px;
+	float: left;
+	cursor: pointer;
+	background: rgba(255,255,255,0.5);
+	border: 1px solid;
+	border-color: rgba(255,255,255,0.3);
+	border-radius: 50%;
+	height: 20px;
+	width: 20px;
+	text-align: center;
+	position: relative;
+	top: 5px;
+	left: 5px;
 }
 
-/* collapse toggle button - triangle */
+/* Collapse toggle button - triangle */
 .collapse-toggle:after {
-    display: block;
-    content: '';
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid #000;
-    position: absolute;
-    top: 8px;
-    left: 5px;
+	display: block;
+	content: '';
+	width: 0;
+	height: 0;
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-top: 5px solid #000;
+	position: absolute;
+	top: 8px;
+	left: 5px;
 }
 
-/* collapse toggle button - triangle - closed state */
+/* Collapse toggle button - triangle - closed state */
 div[data-testid='list'].-closed .collapse-toggle:after {
-    border-top: 5px solid transparent;
-    border-bottom: 5px solid transparent;
-    border-left: 5px solid #000;
-    border-right: none;
-    left: 8px;
-    top: 5px;
+	border-top: 5px solid transparent;
+	border-bottom: 5px solid transparent;
+	border-left: 5px solid #000;
+	border-right: none;
+	left: 8px;
+	top: 5px;
 }
 
-/* ✨ Card count badge — only visible when list is collapsed */
+/* Card count badge — only visible when list is collapsed */
 div[data-testid='list'].-closed .collapse-toggle::before {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    content: attr(data-count);
-    position: absolute;
-    top: 1px;
-    left: 30px;
-    width: 18px;
-    height: 18px;
-    background: #00000088;
-    border-radius: 50%;
-    font-size: 12px;
-    font-weight: bold;
-    color: #ffffff;
-    line-height: 1;
-    transform: rotate(-90deg);
+	display: flex !important;
+	align-items: center;
+	justify-content: center;
+	content: attr(data-count);
+	position: absolute;
+	top: 1px;
+	left: 30px;
+	width: 18px;
+	height: 18px;
+	background: #00000088;
+	border-radius: 50%;
+	font-size: 12px;
+	font-weight: bold;
+	color: #ffffff;
+	line-height: 1;
+	transform: rotate(-90deg);
 }
