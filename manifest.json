@@ -11,7 +11,7 @@
   },
   "manifest_version": 3,
   "name": "Collapsible Trello Lists",
-  "version": "0.0.17",
+  "version": "1.0.1",
   "permissions": [
     "tabs",
     "storage",
