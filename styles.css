@@ -56,23 +56,27 @@ div[data-testid='list'].-closed .collapse-toggle {
 	display: none !important;
 }
 
-/* Collapse toggle button */
+/* Collapse Button - Open State */
 .collapse-toggle {
-	float: left;
-	cursor: pointer;
-	background: #888888;
-	border: 1px solid;
-	border-color: #bbbbbb;
-	border-radius: 50%;
-	height: 20px;
-	width: 20px;
-	text-align: center;
-	position: relative;
-	top: 5px;
-	left: 5px;
+    cursor: pointer;
+    background: #888888;
+    border: 1px solid;
+    border-color: #bbbbbb;
+    border-radius: 50%;
+    height: 20px;
+    width: 20px;
+    text-align: center;
+    position: relative;
+    /* float: left; */
+    left: 2px;
 }
 
-/* Collapse toggle button (triangle) */
+/*  Collapse Button - Closed State */
+div[data-testid='list'].-closed .collapse-toggle {
+    left: 5px;
+}
+
+/* Collapse toggle button (triangle) - Open State */
 .collapse-toggle:after {
 	display: block;
 	content: '';
@@ -84,9 +88,10 @@ div[data-testid='list'].-closed .collapse-toggle {
 	position: absolute;
 	top: 8px;
 	left: 5px;
+	transform: rotate(-90deg);
 }
 
-/* Collapse toggle button (triangle) closed state */
+/* Collapse toggle button (triangle) - Closed State */
 div[data-testid='list'].-closed .collapse-toggle:after {
 	border-top: 5px solid transparent;
 	border-bottom: 5px solid transparent;
@@ -94,6 +99,7 @@ div[data-testid='list'].-closed .collapse-toggle:after {
 	border-right: none;
 	left: 8px;
 	top: 5px;
+	transform: rotate(0deg);
 }
 
 /* Card count badge — only visible when list is collapsed */
@@ -147,3 +153,9 @@ div[data-testid='list'].-closed .collapse-toggle .collapse-label {
 	-webkit-mask-image: linear-gradient(to right, black 70%, transparent 100%);
 	mask-image: linear-gradient(to right, black 70%, transparent 100%);
 }*/
+
+.toggle-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px; /* spacing between button and title */
+}

@@ -31,6 +31,17 @@ document.querySelectorAll("h2[data-testid='list-name']").forEach(e =>
 
 		toggle.appendChild(label);
 
+		// Create a wrapper
+		const wrapper = document.createElement("div");
+		wrapper.className = "toggle-wrapper";
+
+		// Move both toggle and title into the wrapper
+		const header = e.closest("[data-testid='list-header']");
+		header.prepend(wrapper);
+
+		wrapper.appendChild(toggle);
+		wrapper.appendChild(e);
+
 		// Store card count / list name 
 		toggle.dataset.count = cardCount;
 		toggle.dataset.name = rawColumnName;
