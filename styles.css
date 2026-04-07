@@ -60,9 +60,9 @@ div[data-testid='list'].-closed .collapse-toggle {
 .collapse-toggle {
 	float: left;
 	cursor: pointer;
-	background: rgba(255,255,255,0.5);
+	background: #888888;
 	border: 1px solid;
-	border-color: rgba(255,255,255,0.3);
+	border-color: #bbbbbb;
 	border-radius: 50%;
 	height: 20px;
 	width: 20px;
@@ -72,7 +72,7 @@ div[data-testid='list'].-closed .collapse-toggle {
 	left: 5px;
 }
 
-/* Collapse toggle button - triangle */
+/* Collapse toggle button (triangle) */
 .collapse-toggle:after {
 	display: block;
 	content: '';
@@ -86,7 +86,7 @@ div[data-testid='list'].-closed .collapse-toggle {
 	left: 5px;
 }
 
-/* Collapse toggle button - triangle - closed state */
+/* Collapse toggle button (triangle) closed state */
 div[data-testid='list'].-closed .collapse-toggle:after {
 	border-top: 5px solid transparent;
 	border-bottom: 5px solid transparent;
@@ -103,15 +103,47 @@ div[data-testid='list'].-closed .collapse-toggle::before {
 	justify-content: center;
 	content: attr(data-count);
 	position: absolute;
-	top: 1px;
-	left: 30px;
-	width: 18px;
-	height: 18px;
-	background: #00000088;
-	border-radius: 50%;
-	font-size: 12px;
+	top: -1px;
+	left: 180px;
+	width: 22.5px;
+	height: 22.5px;
+
+	background: #242528;
+	/*border: 1px solid;*/
+	/*border-color: #888888;*/
+	border-radius: 33%;
+
+	font-size: 14px;
 	font-weight: bold;
-	color: #ffffff;
+	color: #c9cacc;
 	line-height: 1;
 	transform: rotate(-90deg);
 }
+
+/* Hide label by default */
+.collapse-label {
+	display: none;
+}
+
+div[data-testid='list'].-closed .collapse-toggle .collapse-label {
+	display: block !important;
+	position: absolute;
+	top: 0px;
+	left: 35px;
+	font-size: 14px;
+	font-weight: bold;
+	color: #c4c5c8;
+	white-space: nowrap;
+	transform-origin: left top;
+
+	max-width: 140px;
+
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* I tried to add a fade effect when it gets too long but it worked for all text, not just when it overflowed. So just doing `text-overflow: ellipsis;` for now */
+/*div[data-testid='list'].-closed .collapse-toggle .collapse-label {
+	-webkit-mask-image: linear-gradient(to right, black 70%, transparent 100%);
+	mask-image: linear-gradient(to right, black 70%, transparent 100%);
+}*/

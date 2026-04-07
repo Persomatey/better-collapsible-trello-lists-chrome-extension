@@ -7,7 +7,8 @@ var boardid = window.location.href.substring(
 
 document.querySelectorAll("h2[data-testid='list-name']").forEach(e => 
 {
-	var columnName = encodeURI(e.textContent);
+	var rawColumnName = e.textContent.trim();
+	var columnName = encodeURI(rawColumnName);
 
 	// Count cards in this list
 	var cardCount = e.closest("[data-testid='list']").querySelectorAll("[data-testid='trello-card']").length;
@@ -23,8 +24,16 @@ document.querySelectorAll("h2[data-testid='list-name']").forEach(e =>
 		var toggle = document.createElement("div");
 		toggle.className = "collapse-toggle";
 
-		// Set card count as a data attribute for CSS to pick up
+		// Create label element
+		var label = document.createElement("div");
+		label.className = "collapse-label";
+		label.textContent = rawColumnName;
+
+		toggle.appendChild(label);
+
+		// Store card count / list name 
 		toggle.dataset.count = cardCount;
+		toggle.dataset.name = rawColumnName;
 
 		toggle.addEventListener("click", evt => 
 		{
