@@ -1,105 +1,131 @@
-document.querySelectorAll(".collapse-toggle").forEach(el => el.remove());
+let openList;
 
-var boardid = window.location.href.substring(
-	window.location.href.indexOf("/b/") + 3,
-	window.location.href.indexOf("/b/") + 11
-);
+function waitForBoardStable(callback) {
+    let lastListCount = 0;
+    let lastCardCount = 0;
+    let stableTicks = 0;
 
-document.querySelectorAll("h2[data-testid='list-name']").forEach(e => 
-{
-	var rawColumnName = e.textContent.trim();
-	var columnName = encodeURI(rawColumnName);
+    const interval = setInterval(() => {
+        const listCount = document.querySelectorAll("[data-testid='list']").length;
+        const cardCount = document.querySelectorAll("[data-testid='trello-card']").length;
 
-	// Count cards in this list
-	var cardCount = e.closest("[data-testid='list']").querySelectorAll("[data-testid='trello-card']").length;
+        if (listCount === lastListCount && cardCount === lastCardCount) {
+            stableTicks++;
+        } else {
+            stableTicks = 0;
+            lastListCount = listCount;
+            lastCardCount = cardCount;
+        }
 
-	chrome.storage.local.get(boardid + ":" + columnName, isClosed => 
-	{
-		if (isClosed[boardid + ":" + columnName]) 
-		{
-			e.parentNode.parentNode.parentNode.classList.add("-closed");
-			e.parentNode.parentNode.parentNode.classList.add("-cl");
-		}
+        // Slightly faster than before, since lists stabilize quicker
+        if (stableTicks > 4) {
+            clearInterval(interval);
+            callback();
+        }
+    }, 300);
+}
 
-		var toggle = document.createElement("div");
-		toggle.className = "collapse-toggle";
+waitForBoardStable(() => {
 
-		// Create label element
-		var label = document.createElement("div");
-		label.className = "collapse-label";
-		label.textContent = rawColumnName;
+    document.querySelectorAll(".collapse-toggle").forEach(el => el.remove());
 
-		toggle.appendChild(label);
+    var boardid = window.location.href.substring(
+        window.location.href.indexOf("/b/") + 3,
+        window.location.href.indexOf("/b/") + 11
+    );
 
-		// Create a wrapper
-		const wrapper = document.createElement("div");
-		wrapper.className = "toggle-wrapper";
+    document.querySelectorAll("h2[data-testid='list-name']").forEach(e => 
+    {
+        var rawColumnName = e.textContent.trim();
+        var columnName = encodeURI(rawColumnName);
+        var list = e.closest("[data-testid='list']");
+        var key = boardid + ":" + columnName;
 
-		// Move both toggle and title into the wrapper
-		const header = e.closest("[data-testid='list-header']");
-		header.prepend(wrapper);
+        // Count cards AFTER Trello is stable
+        var cardCount = list.querySelectorAll("[data-testid='trello-card']").length;
 
-		wrapper.appendChild(toggle);
-		wrapper.appendChild(e);
+        chrome.storage.local.get(key, isClosed => 
+        {
+            if (isClosed[key])
+            {
+                list.classList.add("-closed");
+                list.classList.add("-cl");
+            }
 
-		// Store card count / list name 
-		toggle.dataset.count = cardCount;
-		toggle.dataset.name = rawColumnName;
+            var toggle = document.createElement("div");
+            toggle.className = "collapse-toggle";
 
-		toggle.addEventListener("click", evt => 
-		{
-			var thisColumn = encodeURI(evt.target.nextSibling.textContent);
+            var label = document.createElement("div");
+            label.className = "collapse-label";
+            label.textContent = rawColumnName;
 
-			// Refresh card count on toggle (list may have changed)
-			var freshCount = evt.target.closest("[data-testid='list']").querySelectorAll("[data-testid='trello-card']").length;
-			evt.target.dataset.count = freshCount;
+            toggle.appendChild(label);
 
-			chrome.storage.local.set(
-			{
-				[boardid + ":" + thisColumn]: isClosed[boardid + ":" + columnName] ? null : true
-			},
-			res => 
-			{
-				evt.target.parentNode.parentNode.parentNode.classList.toggle("-closed");
-				evt.target.parentNode.parentNode.parentNode.classList.toggle("-cl");
-			});
-		});
+            const wrapper = document.createElement("div");
+            wrapper.className = "toggle-wrapper";
 
-		e.parentNode.insertBefore(toggle, e);
-	});
+            const header = e.closest("[data-testid='list-header']");
+            header.prepend(wrapper);
 
-	var isClosed, openList;
+            wrapper.appendChild(toggle);
+            wrapper.appendChild(e);
 
-	document.querySelectorAll("div[data-testid='list']").forEach(lc => 
-	{
-		lc.addEventListener("dragenter", lce => 
-		{
-			document.querySelectorAll("div[data-testid='list'].-cl").forEach(l => 
-			{
-				const c = l.getBoundingClientRect();
-				if (lce.pageX > c.left && lce.pageX < c.right && lce.pageY > c.top && lce.pageY < c.bottom) 
-				{
-					if (!openList) 
-					{
-						openList = setTimeout(() => 
-						{
-							l.classList.add("-open");
-							l.classList.remove("-closed");
-						}, 250);
-					}
-				} 
-				else 
-				{
-					clearTimeout(openList);
-					openList = null;
+            toggle.dataset.count = cardCount;
+            toggle.dataset.name = rawColumnName;
 
-					if (l.classList.contains("-open")) 
-					{
-						l.classList.remove("-open");
-						l.classList.add("-closed");
-					}
-				}
-			});
-		});
-	});
+            toggle.addEventListener("click", evt => 
+            {
+                var thisColumn = encodeURI(evt.target.nextSibling.textContent);
+
+                var freshCount = evt.target.closest("[data-testid='list']")
+                    .querySelectorAll("[data-testid='trello-card']").length;
+
+                evt.target.dataset.count = freshCount;
+
+                chrome.storage.local.set(
+                {
+                    [key]: isClosed[key] ? null : true
+                },
+                res => 
+                {
+                    list.classList.toggle("-closed");
+                    list.classList.toggle("-cl");
+                });
+            });
+        });
+    });
+
+    document.querySelectorAll("div[data-testid='list']").forEach(lc => 
+    {
+        lc.addEventListener("dragenter", lce => 
+        {
+            document.querySelectorAll("div[data-testid='list'].-cl").forEach(l => 
+            {
+                const c = l.getBoundingClientRect();
+                if (lce.pageX > c.left && lce.pageX < c.right && lce.pageY > c.top && lce.pageY < c.bottom) 
+                {
+                    if (!openList) 
+                    {
+                        openList = setTimeout(() => 
+                        {
+                            l.classList.add("-open");
+                            l.classList.remove("-closed");
+                        }, 250);
+                    }
+                } 
+                else 
+                {
+                    clearTimeout(openList);
+                    openList = null;
+
+                    if (l.classList.contains("-open")) 
+                    {
+                        l.classList.remove("-open");
+                        l.classList.add("-closed");
+                    }
+                }
+            });
+        });
+    });
+
 });
